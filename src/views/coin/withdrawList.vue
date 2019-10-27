@@ -1,30 +1,29 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.keywords" placeholder="用户名" style="width: 200px;" class="filter-item"
-        @keyup.enter.native="handleFilter" />
-
-      <el-select v-model="listQuery.status" style="width: 140px" class="filter-item" @change="handleFilter">
+      <el-input v-model="listQuery.keywords" placeholder="用户名" style="width: 200px;" class="filter-item" />
+      <el-select v-model="listQuery.status" style="width: 140px" class="filter-item">
         <el-option v-for="(item,index) in status" :key="item" :label="index" :value="item" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList">搜索</el-button>
+      <el-button v-waves class="filter-item" type="primary" @click="MultiplePass">批量通过</el-button>
+      <el-button v-waves class="filter-item" type="primary" @click="MultipleReject">批量驳回</el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;">
-      <el-table-column label="ID" prop="id" sortable="custom" align="center">
+    <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" align="center" />
+      <el-table-column label="ID" prop="Id" sortable="custom" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
-
-<!--      <el-table-column label="协议" align="center">
-        <template slot-scope="scope">
-          <span v-for="(item, index) in protocolList" v-if="item.id == scope.row.Protocol" :key="index">{{ item.name }}</span>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="用户备注" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.MembersRemark }}
+          <span>{{ scope.row.Id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="用户id" align="center">
@@ -121,9 +120,6 @@
         <el-form-item label="验证码" label-width="70px">
           <el-input v-model="process.Remark" :disabled="true" />
         </el-form-item>
-        <!-- <el-form-item label="备注" label-width="70px">
-          <el-input v-model="process.Remark" type="textarea" />
-        </el-form-item> -->
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -132,148 +128,240 @@
         <el-button type="primary" @click="handleProcess(3)">直接处理</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="批量通过" :visible.sync="MultiplePassView">
+      <el-form>
+        <el-form-item label="Hash" label-width="70px">
+          <el-input v-model.trim="Hash" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="HandleMultiplePass">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="批量驳回" :visible.sync="MultipleRejectView">
+      <el-form>
+        <el-form-item label="理由" label-width="70px">
+          <el-input v-model.trim="Remark" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="HandleMultipleReject">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import {
-    withdrawList,
-    getProtocol,
-    getWithdrawCoin,
-    waitProcess
-  } from '@/api/coin.js';
-  import {
-    dateHandle
-  } from '@/api/dateHandle.js';
-  import waves from '@/directive/waves';
-  import {
-    parseTime
-  } from '@/utils';
-  import Pagination from '@/components/Pagination';
-  import permission from '@/directive/permission/index.js';
-  import Upload from '@/components/Upload/SingleImage3';
+import {
+  withdrawList,
+  getProtocol,
+  getWithdrawCoin,
+  waitProcess,
+  MultiplePass,
+  MultipleReject
+} from '@/api/coin.js'
+import {
+  dateHandle
+} from '@/api/dateHandle.js'
+import waves from '@/directive/waves'
+import {
+  parseTime
+} from '@/utils'
+import Pagination from '@/components/Pagination2'
+import permission from '@/directive/permission/index.js'
+import Upload from '@/components/Upload/SingleImage3'
 
-  export default {
-    components: {
-      Pagination,
-      Upload
-    },
-    directives: {
-      waves,
-      permission
-    },
-    data() {
-      return {
-        tableKey: 0,
-        list: null,
-        listLoading: true,
-        total: 0,
-        listQuery: {
-          page: 1,
-          limit: 20,
-          status: '',
-          keywords: ''
-        },
-        protocolList: null,
-
-        processVisible: false,
-        status: {
-          '驳回': -1,
-          '待处理': 0,
-          "已处理": 2,
-          "全部": ''
-        },
-        process: {
-          Address: '',
-          RPCUser: '',
-          AddTime: '',
-          CoinName: '',
-          Money: '',
-          Fee: '',
-          Real: '',
-          verifycode: '',
-          Remark: '',
-          id: 0
-        },
-        handleTimeOut: false
-      };
-    },
-    created() {
-      this.getList();
-      this.getProtocolList();
-    },
-    methods: {
-      _date(t) {
-        return dateHandle('Y-m-d H:i:s', t)
+export default {
+  components: {
+    Pagination,
+    Upload
+  },
+  directives: {
+    waves,
+    permission
+  },
+  data() {
+    return {
+      tableKey: 0,
+      list: null,
+      listLoading: true,
+      total: 0,
+      listQuery: {
+        page: 1,
+        limit: 20,
+        status: '',
+        keywords: ''
       },
-      getList() {
-        withdrawList(this.listQuery).then(res => {
-          if (res.code == 20000) {
-            this.list = res.data.data;
-            this.total = res.data.total;
-            this.listLoading = false;
-          }
-        });
-        this.listLoading = true;
+      protocolList: null,
+
+      processVisible: false,
+      status: {
+        '驳回': -1,
+        '待处理': 0,
+        '已处理': 2,
+        '全部': ''
       },
-
-      // 获取币种类型
-      getProtocolList() {
-        getProtocol().then(res => {
-          if (res.code == 20000) {
-            this.protocolList = res.data;
-          }
-        });
+      process: {
+        Address: '',
+        RPCUser: '',
+        AddTime: '',
+        CoinName: '',
+        Money: '',
+        Fee: '',
+        Real: '',
+        verifycode: '',
+        Remark: '',
+        id: 0
       },
-
-      // 待处理显示页面
-      showWaitProcess(row) {
-        getWithdrawCoin({
-          id: row.id
-        }).then(res => {
-          if (res.code == 20000) {
-            this.process.Address = res.data.Address;
-            this.process.RPCUser = res.data.RPCUser;
-            this.process.AddTime = res.data.AddTime;
-            this.process.CoinName = res.data.CoinName;
-            this.process.Money = res.data.Money;
-            this.process.Fee = res.data.Fee;
-            this.process.Real = res.data.Real;
-            this.process.verifycode = res.data.verifycode;
-            this.process.Remark = res.data.Remark;
-            this.process.id = res.data.id;
-          }
-        });
-        this.processVisible = true;
-      },
-
-      // 待处理逻辑
-      handleProcess(type) {
-
-
-        if (this.handleTimeOut) return;
-        this.handleTimeOut = true;
-
-        setTimeout(() => {
-          this.handleTimeOut = false;
-        }, 2500);
-
-        console.log(this.process);
-        console.log('待处理');
-        const param = {
-          id: Number(this.process.id),
-          type: Number(type)
-        };
-        waitProcess(param).then(res => {
-          if (res.code == 20000) {
-            this.$message({
-              type: 'success',
-              message: res.msg
-            });
-            this.getList();
-          }
-        });
-      }
+      handleTimeOut: false,
+      SelectIds: [],
+      Hash: '',
+      MultiplePassView: false,
+      MultipleRejectView: false,
+      Remark: ''
     }
-  };
+  },
+  created() {
+    this.getList()
+    this.getProtocolList()
+  },
+  methods: {
+    MultiplePass() {
+      if (this.SelectIds.length <= 0) {
+        this.$message({
+          type: 'warning',
+          message: '请选择需要处理的记录'
+        })
+        return
+      }
+      this.MultiplePassView = true
+    },
+    HandleMultiplePass() {
+      if (this.Hash.length <= 0) {
+        this.$message({
+          type: 'warning',
+          message: '请填写hash'
+        })
+        return
+      }
+      MultiplePass({ Ids: this.SelectIds, Hash: this.Hash }).then(res => {
+        if (res.code == 20000) {
+          this.$message({
+            type: 'success',
+            message: '已批量通过'
+          })
+          this.getList()
+          this.MultiplePassView = false
+        }
+      })
+    },
+    MultipleReject() {
+      if (this.SelectIds.length <= 0) {
+        this.$message({
+          type: 'warning',
+          message: '请选择需要处理的记录'
+        })
+        return
+      }
+      this.MultipleRejectView = true
+    },
+    HandleMultipleReject() {
+      if (this.Remark.length <= 0) {
+        this.$message({
+          type: 'warning',
+          message: '请填写驳回理由'
+        })
+        return
+      }
+      MultipleReject({ Ids: this.SelectIds, Remark: this.Remark }).then(res => {
+        if (res.code == 20000) {
+          this.$message({
+            type: 'success',
+            message: '已批量通过'
+          })
+          this.getList()
+          this.MultipleRejectView = false
+        }
+      })
+    },
+    handleSelectionChange(rows) {
+      this.SelectIds = []
+      var _this = this
+      rows.forEach(row => {
+        _this.SelectIds.push(row.Id)
+      })
+    },
+    _date(t) {
+      return dateHandle('Y-m-d H:i:s', t)
+    },
+    getList() {
+      withdrawList(this.listQuery).then(res => {
+        if (res.code == 20000) {
+          this.list = res.data.data
+          this.total = res.data.total
+          this.listLoading = false
+        }
+      })
+      this.listLoading = true
+    },
+
+    // 获取币种类型
+    getProtocolList() {
+      getProtocol().then(res => {
+        if (res.code == 20000) {
+          this.protocolList = res.data
+        }
+      })
+    },
+
+    // 待处理显示页面
+    showWaitProcess(row) {
+      getWithdrawCoin({
+        id: row.Id
+      }).then(res => {
+        if (res.code == 20000) {
+          this.process.Address = res.data.Address
+          this.process.RPCUser = res.data.RPCUser
+          this.process.AddTime = res.data.AddTime
+          this.process.CoinName = res.data.CoinName
+          this.process.Money = res.data.Money
+          this.process.Fee = res.data.Fee
+          this.process.Real = res.data.Real
+          this.process.verifycode = res.data.verifycode
+          this.process.Remark = res.data.Remark
+          this.process.id = res.data.Id
+        }
+      })
+      this.processVisible = true
+    },
+
+    // 待处理逻辑
+    handleProcess(type) {
+      if (this.handleTimeOut) return
+      this.handleTimeOut = true
+
+      setTimeout(() => {
+        this.handleTimeOut = false
+      }, 2500)
+
+      console.log(this.process)
+      console.log('待处理')
+      const param = {
+        id: Number(this.process.id),
+        type: Number(type)
+      }
+      waitProcess(param).then(res => {
+        if (res.code == 20000) {
+          this.$message({
+            type: 'success',
+            message: res.msg
+          })
+          this.getList()
+        }
+      })
+    }
+  }
+}
 </script>

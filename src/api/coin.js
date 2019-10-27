@@ -1,9 +1,6 @@
 import request from '@/utils/request'
 
-
-
-
-//汇率列表
+// 汇率列表
 export function extendList(query) {
   return request({
     url: 'coin/extendList',
@@ -12,7 +9,7 @@ export function extendList(query) {
   })
 }
 
-//汇率设置
+// 汇率设置
 export function extendEdit(data) {
   return request({
     url: '/coin/extendEdit',
@@ -69,8 +66,6 @@ export function coinUpdate(data) {
   })
 }
 
-
-
 /**
  * 获取币种协议
  * @param {*} data
@@ -79,7 +74,7 @@ export function getProtocol() {
   return request({
     url: '/coin/getProtocol',
     method: 'get',
-    params: {  }
+    params: { }
   })
 }
 
@@ -95,8 +90,6 @@ export function getCoin(id) {
   })
 }
 
-
-
 /**
  * 转入记录
  * @param {*} data
@@ -105,12 +98,9 @@ export function rechargeList(query) {
   return request({
     url: '/coin/rechargeList',
     method: 'get',
-    params:query
+    params: query
   })
 }
-
-
-
 
 /**
  * 转出记录
@@ -120,11 +110,9 @@ export function withdrawList(query) {
   return request({
     url: '/coin/withdrawList',
     method: 'get',
-    params:query
+    params: query
   })
 }
-
-
 
 /**
  * 转出记录
@@ -138,7 +126,6 @@ export function waitProcess(data) {
   })
 }
 
-
 /**
  * 获取一条记录
  */
@@ -149,8 +136,6 @@ export function getWithdrawCoin(query) {
     params: query
   })
 }
-
-
 
 /**
  * 获取资金流水
@@ -163,7 +148,6 @@ export function financingList(query) {
   })
 }
 
-
 /**
  * 获取资金变动类型
  */
@@ -175,7 +159,6 @@ export function financingMoldList(query) {
   })
 }
 
-
 /**
  * 获取IA币转入记录
  */
@@ -186,3 +169,24 @@ export function IARechargeChainLog(query) {
     params: query
   })
 }
+
+/**
+ * 批量通过
+ */
+export function MultiplePass(data) {
+  return request({
+    url: '/coin/MultiplePass',
+    method: 'post',
+    data
+  })
+}
+
+// 批量驳回
+export function MultipleReject(data) {
+  return request({
+    url: '/coin/MultipleReject',
+    method: 'post',
+    data
+  })
+}
+

@@ -7,6 +7,7 @@
         <el-option label="已放行" :value="3" />
         <el-option label="已违约" :value="4" />
         <el-option label="未放行" :value="0" />
+        <el-option label="已出局" :value="2" />
       </el-select>
       <span style="font-size:14px;vertical-align:middle;color:#606266;">预约时间: </span>&nbsp;
       <datePicker v-model="listQuery.PlanDate" class="filter-item" />
@@ -29,6 +30,11 @@
           <span>{{ scope.row.Id }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="用户名" sortable="custom" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.NickName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="手机号" sortable="custom" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.Phone }}</span>
@@ -49,6 +55,8 @@
           <span v-if="scope.row.State == 0">排队</span>
           <span v-else-if="scope.row.State == 3">放行</span>
           <span v-else-if="scope.row.State == 1">报单</span>
+          <span v-else-if="scope.row.State == 2">出局</span>
+          <span v-else-if="scope.row.State == 4">违约</span>
         </template>
       </el-table-column>
       <el-table-column label="放行时间" sortable="custom" align="center">

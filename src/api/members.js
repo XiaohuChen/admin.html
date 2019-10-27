@@ -61,7 +61,6 @@ export function memberCoinLockMoney(data) {
   })
 }
 
-
 /**
  * 禁用启用用户账号
  * @param {*} data
@@ -99,7 +98,6 @@ export function capitalMovements(query) {
   })
 }
 
-
 /**
  * 获取资金流水
  * @param {*} data
@@ -111,7 +109,6 @@ export function memberAddressList(query) {
     params: query
   })
 }
-
 
 /**
  * 更改会员VIP状态
@@ -147,3 +144,40 @@ export function memberRemark(data) {
     data
   })
 }
+
+/**
+ * 实名认证列表
+ * @param {*} data
+ */
+export function membersAuthList(data) {
+  return request({
+    url: '/auth/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 实名认证驳回
+ * @param {*} data
+ */
+export function AuthReject(data) {
+  return request({
+    url: '/auth/reject',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 实名认证通过
+ * @param {*} data
+ */
+export function AuthPass(data) {
+  return request({
+    url: '/auth/pass',
+    method: 'post',
+    data
+  })
+}
+

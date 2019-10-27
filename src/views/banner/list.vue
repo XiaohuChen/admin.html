@@ -69,7 +69,7 @@
         </el-form-item>
 
         <el-form-item label="图片" label-width="100px">
-          <el-upload class="avatar-uploader" action="http://up-z2.qiniup.com" :show-file-list="false" :on-success="handleAvatarSuccess"
+          <el-upload class="avatar-uploader" action="https://up-z2.qiniup.com" :show-file-list="false" :on-success="handleAvatarSuccess"
             :data="{ token: qiniu.Token }">
             点击更换
             <img v-if="imageUrl" :src="imageUrl" class="avatar" />

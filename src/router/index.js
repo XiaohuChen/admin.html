@@ -106,6 +106,27 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/kline',
+    component: Layout,
+    redirect: '/kline/list',
+    meta: {
+      title: '行情管理',
+      icon: 'table'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/kline/list'),
+        name: 'KlineList',
+        meta: {
+          title: '行情管理',
+          icon: 'list',
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
     path: '/community',
     component: Layout,
     redirect: '/community/list',
@@ -159,7 +180,7 @@ export const asyncRoutes = [
       {
         path: 'invite',
         component: () => import('@/views/setting/invite'),
-        name: 'Setting',
+        name: 'SettingInvite',
         meta: {
           title: '邀请奖励设置',
           icon: 'tree-table',
@@ -169,7 +190,7 @@ export const asyncRoutes = [
       {
         path: 'world',
         component: () => import('@/views/setting/world'),
-        name: 'Setting',
+        name: 'SettingWorld',
         meta: {
           title: '分红和回购设置',
           icon: 'tree-table',
@@ -231,6 +252,27 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/auth',
+    component: Layout,
+    redirect: '/auth/list',
+    meta: {
+      title: '实名认证',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/auth/list'),
+        name: 'AuthList',
+        meta: {
+          title: '实名认证',
+          icon: 'example',
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
     path: '/config',
     component: Layout,
     redirect: '/config/list',
@@ -270,34 +312,6 @@ export const asyncRoutes = [
     }
     ]
   },
-  {
-    path: '/icon',
-    component: Layout,
-    children: [{
-      path: 'index',
-      component: () => import('@/views/icons/index'),
-      name: 'Icons',
-      meta: {
-        title: '图标',
-        icon: 'icon',
-        noCache: true
-      }
-    }]
-  },
-  {
-    path: '/clipboard',
-    component: Layout,
-    children: [{
-      path: 'index',
-      component: () => import('@/views/clipboard/index'),
-      name: 'ClipboardDemo',
-      meta: {
-        title: 'Clipboard',
-        icon: 'clipboard'
-      }
-    }]
-  },
-
   {
     path: '/rule',
     component: Layout,
@@ -430,7 +444,8 @@ export const asyncRoutes = [
       }
     }
     ]
-  }, {
+  },
+  {
     path: '/members',
     component: Layout,
     redirect: '/members/list',
@@ -457,26 +472,67 @@ export const asyncRoutes = [
       title: '广告管理',
       icon: 'example'
     },
-    children: [{
-      path: 'bannerList',
-      component: () => import('@/views/banner/list'),
-      name: 'bannerList',
-      meta: {
-        title: 'banner列表',
-        icon: 'example',
-        noCache: true
+    children: [
+      {
+        path: 'bannerList',
+        component: () => import('@/views/banner/list'),
+        name: 'bannerList',
+        meta: {
+          title: 'banner列表',
+          icon: 'example',
+          noCache: true
+        }
+      },
+      {
+        path: 'noticeList',
+        component: () => import('@/views/notice/list'),
+        name: 'noticeList',
+        meta: {
+          title: '公告列表',
+          icon: 'example',
+          noCache: true
+        }
+      },
+      {
+        path: 'AboutUs',
+        component: () => import('@/views/notice/aboutUs'),
+        name: 'AboutUs',
+        meta: {
+          title: '关于我们',
+          icon: 'example',
+          noCache: true
+        }
+      },
+      {
+        path: 'MemberDoc',
+        component: () => import('@/views/notice/MemberDoc'),
+        name: 'MemberDoc',
+        meta: {
+          title: '用户协议',
+          icon: 'example',
+          noCache: true
+        }
+      },
+      {
+        path: 'News',
+        component: () => import('@/views/notice/News'),
+        name: 'News',
+        meta: {
+          title: '快讯',
+          icon: 'example',
+          noCache: true
+        }
+      },
+      {
+        path: 'qa',
+        component: () => import('@/views/notice/qa'),
+        name: 'QA',
+        meta: {
+          title: '常见问题',
+          icon: 'example',
+          noCache: true
+        }
       }
-    },
-    {
-      path: 'noticeList',
-      component: () => import('@/views/notice/list'),
-      name: 'noticeList',
-      meta: {
-        title: '公告列表',
-        icon: 'example',
-        noCache: true
-      }
-    }
     ]
   },
   {

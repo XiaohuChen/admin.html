@@ -25,6 +25,10 @@ window._ = _
 import _g from './assets/js/global'
 window._g = _g
 
+import VueDirectiveImagePreviewer from 'vue-directive-image-previewer'
+import 'vue-directive-image-previewer/dist/assets/style.css'
+Vue.use(VueDirectiveImagePreviewer)
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

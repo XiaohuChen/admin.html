@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.Phone" placeholder="手机号" type="number" class="filter-item" style="width: 200px;" />
-      <el-select v-model="listQuery.Type" style="width: 140px" placeholder="放行状态" class="filter-item" @change="getList">
+      <el-select v-model="listQuery.Type" style="width: 140px" placeholder="放行状态" class="filter-item" @change="init">
         <el-option label="全部" value="" />
         <el-option label="静态奖励" :value="1" />
         <el-option label="邀请奖励" :value="2" />
@@ -20,6 +20,7 @@
 
     <el-table v-loading="listLoading" :data="list" style="width: 100%" border>
       <el-table-column prop="Id" label="ID" align="center" width="100" />
+      <el-table-column prop="NickName" align="center" label="用户名" />
       <el-table-column prop="Phone" align="center" label="手机号" />
       <el-table-column label="收益类型" sortable="custom" align="center">
         <template slot-scope="scope">

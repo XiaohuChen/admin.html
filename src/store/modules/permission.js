@@ -25,7 +25,6 @@ export function filterAsyncRoutes(routes, roles) {
   const res = []
   routes.forEach(route => {
     const tmp = { ...route }
-
     if (roles.includes(tmp.path)) {
       if (tmp.children) {
         tmp.children = filterChildren(tmp.children, roles, tmp.path)
@@ -35,7 +34,6 @@ export function filterAsyncRoutes(routes, roles) {
       }
     }
   })
-
   return res
 }
 
